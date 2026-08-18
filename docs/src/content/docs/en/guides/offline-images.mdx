@@ -1,0 +1,108 @@
+﻿---
+title: Offline Images
+description: Package Docker images as tar files online, with single and batch download.
+---
+
+HubProxy's web UI (`enableFrontend = true`) and API package images as tar archives without a local Docker daemon.
+
+Downloads use a **two-step flow**: `prepare` for a one-time token, then download with that token. Tokens expire in **2 minutes** and are bound to client IP and User-Agent.
+
+## Web UI
+
+Visit the HubProxy homepage and use the offline image feature. Leave architecture empty to prefer `linux/amd64`; if a specified architecture is unmatched, the first available platform in the multi-arch index is used.
+
+## Image Reference Format
+
+Besides Docker Hub official images, enter a full registry-prefixed reference to pull from other platforms:
+
+| Source | Example input |
+|--------|---------------|
+| Docker Hub | `nginx`, `redis:7` |
+| GHCR | `ghcr.io/sky22333/hubproxy`, `ghcr.io/owner/app:v1.0` |
+| Quay | `quay.io/coreos/etcd:latest` |
+| GCR / K8s | `gcr.io/distroless/base`, `registry.k8s.io/pause:3.9` |
+
+Missing tags default to `:latest`. Single-segment names (no `/`) get the `library/` namespace. The registry must be enabled in `[registries]` and the image must be anonymously pullable.
+
+## Compressed Layers
+
+The web UI and API expose a compressed-layers toggle (`compressed` / `useCompressedLayers`, **on by default**). **Keep it enabled** in most cases.
+
+| Setting | Contents of each `layer.tar` in the archive | Size | Use case |
+|---------|-----------------------------------------------|------|----------|
+| On (default) | **Compressed blob** from the registry (usually gzip) | Smaller, faster download | Modern Docker Engine, `docker load` |
+| Off | **Uncompressed** filesystem layer tar (classic `docker save` format) | Larger, slower to build | Older Docker Engine versions or environments that only accept uncompressed layers |
+
+HubProxy outputs a `docker load`-compatible tar. With compression enabled, each layer keeps the upstream compressed blob instead of decompressing and re-packing on the server, which saves bandwidth and CPU. The off switch remains for **legacy Docker** (image format v1 era and early `docker load` implementations): those expect uncompressed filesystem tars in `layer.tar`, matching `docker save` output — disabling compression produces the same layer format.
+
+## Single Image API
+
+**Step 1: Prepare**
+
+```bash
+curl "https://example.com/api/image/download?image=library/nginx:latest&mode=prepare"
+```
+
+Response:
+
+```json
+{
+  "download_url": "/api/image/download?image=library/nginx%3Alatest&token=..."
+}
+```
+
+**Step 2: Download tar**
+
+```bash
+curl -L -o nginx.tar "https://example.com/api/image/download?image=library/nginx:latest&token=YOUR_TOKEN"
+```
+
+Optional parameters:
+
+| Param | Description |
+|-------|-------------|
+| `platform` | Target platform, e.g. `linux/arm64`; empty prefers `linux/amd64`; if specified but unmatched, uses the first available platform in the index |
+| `tag` | Used when image has no tag, default `latest` |
+| `compressed` | Keep registry-compressed layers in tar, default `true` (recommended — see **Compressed Layers** above) |
+
+## Batch API
+
+**Step 1: Prepare**
+
+```bash
+curl -X POST "https://example.com/api/image/batch?mode=prepare" \
+  -H "Content-Type: application/json" \
+  -d '{"images":["nginx:latest","ghcr.io/sky22333/hubproxy:latest"],"useCompressedLayers":true}'
+```
+
+**Step 2: Download combined tar**
+
+```bash
+curl -L -o batch.tar "https://example.com/api/image/batch?token=YOUR_TOKEN"
+```
+
+## Image Info
+
+```bash
+curl "https://example.com/api/image/info?image=library/nginx:latest"
+```
+
+## Limits
+
+| Config / Rule | Default | Description |
+|--------------|---------|-------------|
+| `[download].maxImages` | `10` | Max images per batch |
+| Prepare debounce (single) | 5s | Repeated prepare returns 429 |
+| Prepare debounce (batch) | 60s | Same for batch |
+| Token TTL | 2 min | Invalid if expired or IP/UA mismatch |
+
+```toml
+[download]
+maxImages = 10
+```
+
+## Notes
+
+- Large images take longer; streamed downloads must restart if interrupted
+- Subject to `[access]` lists and IP rate limiting
+- Frontend static routes (`/`, `/images`, `/search`, `/assets/*`) are not rate-limited; `/ready`, API, and proxy requests all count

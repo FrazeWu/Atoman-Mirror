@@ -1,0 +1,14 @@
+services:
+  hubproxy:
+    image: hubproxy:atoman-custom
+    container_name: hubproxy
+    restart: always
+    ports:
+      - "127.0.0.1:50001:5000"
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "200m"
+        max-file: "3"
