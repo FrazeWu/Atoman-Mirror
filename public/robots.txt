@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /cdn-cgi/
+Disallow: /token
+Disallow: /v2/
+Disallow: /ubuntu/
+Disallow: /ubuntu-security/
+Disallow: /debian/
+Disallow: /debian-security/
+Disallow: /go/
+Disallow: /gosumdb/
+Disallow: /pypi/
+Disallow: /npm/
+
+Sitemap: https://mirror.atoman.org/sitemap.xml
