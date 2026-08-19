@@ -2,16 +2,18 @@
 set -e
 
 warn() {
-    echo "hubproxy: $1"
+    echo "atoman-mirror: $1"
 }
 
 if command -v systemctl >/dev/null 2>&1; then
     systemctl daemon-reload || warn "systemd reload failed"
-    systemctl enable hubproxy >/dev/null 2>&1 || warn "systemd enable failed"
+    systemctl stop hubproxy >/dev/null 2>&1 || true
+    systemctl disable hubproxy >/dev/null 2>&1 || true
+    systemctl enable atoman-mirror >/dev/null 2>&1 || warn "systemd enable failed"
 
     if [ -d /run/systemd/system ]; then
-        systemctl restart hubproxy || systemctl start hubproxy || {
-            warn "service start failed, check: journalctl -u hubproxy"
+        systemctl restart atoman-mirror || systemctl start atoman-mirror || {
+            warn "service start failed, check: journalctl -u atoman-mirror"
         }
     fi
 fi

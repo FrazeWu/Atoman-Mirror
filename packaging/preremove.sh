@@ -8,8 +8,8 @@ case "${1:-}" in
 esac
 
 if command -v systemctl >/dev/null 2>&1; then
-    systemctl stop hubproxy >/dev/null 2>&1 || true
-    systemctl disable hubproxy >/dev/null 2>&1 || true
+    systemctl stop atoman-mirror >/dev/null 2>&1 || true
+    systemctl disable atoman-mirror >/dev/null 2>&1 || true
 fi
 
 if command -v rc-service >/dev/null 2>&1; then

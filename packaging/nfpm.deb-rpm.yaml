@@ -23,8 +23,8 @@ contents:
     file_info:
       mode: 0644
 
-  - src: ./packaging/hubproxy.service
-    dst: /lib/systemd/system/hubproxy.service
+  - src: ./packaging/atoman-mirror.service
+    dst: /lib/systemd/system/atoman-mirror.service
     file_info:
       mode: 0644
 
