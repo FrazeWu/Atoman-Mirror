@@ -2,6 +2,7 @@ const servicePages = [...document.querySelectorAll("[data-page]")];
 const serviceLinks = [...document.querySelectorAll("[data-service]")];
 const serviceIds = new Set(servicePages.map((page) => page.dataset.page));
 const defaultService = "docker-hub";
+const isStaticGuide = document.body.dataset.staticGuide === "true";
 
 function currentService() {
 	const service = window.location.hash.slice(1);
@@ -28,11 +29,13 @@ function copyCommand(button) {
 	return navigator.clipboard.writeText(code);
 }
 
-serviceLinks.forEach((link) => {
-	link.addEventListener("click", () => {
-		window.setTimeout(renderService, 0);
+if (!isStaticGuide) {
+	serviceLinks.forEach((link) => {
+		link.addEventListener("click", () => {
+			window.setTimeout(renderService, 0);
+		});
 	});
-});
+}
 
 document.querySelectorAll(".copy").forEach((button) => {
 	button.addEventListener("click", async () => {
@@ -53,10 +56,12 @@ document.querySelectorAll(".copy").forEach((button) => {
 	});
 });
 
-window.addEventListener("hashchange", renderService);
+if (!isStaticGuide) {
+	window.addEventListener("hashchange", renderService);
 
-if (!window.location.hash || !serviceIds.has(window.location.hash.slice(1))) {
-	window.history.replaceState(null, "", `#${defaultService}`);
+	if (!window.location.hash || !serviceIds.has(window.location.hash.slice(1))) {
+		window.history.replaceState(null, "", `#${defaultService}`);
+	}
+
+	renderService();
 }
-
-renderService();

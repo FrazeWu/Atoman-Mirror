@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。" />
+    <link rel="canonical" href="https://mirror.atoman.org/go" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Go Modules 镜像配置 | Atoman Mirror" />
+    <meta property="og:description" content="为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。" />
+    <meta property="og:url" content="https://mirror.atoman.org/go" />
+    <meta property="og:image" content="https://www.atoman.org/atoman-share.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Go Modules 镜像配置 | Atoman Mirror" />
+    <meta name="twitter:description" content="为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。" />
+    <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Go Modules 镜像配置","description":"为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。","url":"https://mirror.atoman.org/go","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
+    <title>Go Modules 镜像配置 | Atoman Mirror</title>
+    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+  </head>
+  <body data-static-guide="true">
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
+    <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav"><a href="/docker">Docker Hub</a>
+            <a href="/ghcr">GitHub Container Registry</a>
+            <a href="/pypi">PyPI</a>
+            <a href="/npm">npm</a>
+            <a href="/go" aria-current="page">Go Modules</a>
+            <a href="/ubuntu">Ubuntu APT</a>
+            <a href="/debian">Debian APT</a></nav></div></aside><main id="content" class="main-content" tabindex="-1"><article id="go" class="service-page" data-page="go">
+          <header class="page-header">
+            <p class="breadcrumb">ATOMAN / MIRROR</p>
+            <div class="title-row">
+              <h1>Go Modules</h1>
+              <span class="status"><i></i> 公开服务</span>
+            </div>
+            <p>模块代理与校验数据库均经过本站，保留默认完整性校验。</p>
+          </header>
+          <section class="endpoint" aria-label="服务地址">
+            <span>模块代理</span><code>mirror.atoman.org/go</code>
+          </section>
+          <section class="config-section" aria-labelledby="go-config">
+            <div class="section-heading">
+              <h2 id="go-config">配置 Go 环境</h2>
+              <span>01</span>
+            </div>
+            <section class="config-method" aria-labelledby="go-temporary">
+              <div class="method-heading">
+                <h3 id="go-temporary">临时使用</h3>
+                <p>仅对当前终端命令生效。</p>
+              </div>
+              <div class="command">
+                <pre><code>GOPROXY=https://mirror.atoman.org/go,direct \
+GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb" \
+go install example.com/module@latest</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+            <section class="config-method" aria-labelledby="go-persistent">
+              <div class="method-heading">
+                <h3 id="go-persistent">写入配置文件</h3>
+                <p>由 Go 写入 <code>GOENV</code> 指向的用户配置文件。</p>
+              </div>
+              <div class="command">
+                <pre><code>go env -w GOPROXY=https://mirror.atoman.org/go,direct
+go env -w GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb"</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+          </section>
+        </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">保留 sum.golang.org 的完整性校验。执行 go env GOPROXY GOSUMDB 确认配置；使用 go env -u GOPROXY GOSUMDB 可恢复 Go 默认设置。</p></section></main></div>
+    <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
+    <script src="/app.js?v=20260819-2" defer></script>
+  </body>
+</html>

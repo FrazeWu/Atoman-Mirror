@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。" />
+    <link rel="canonical" href="https://mirror.atoman.org/pypi" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="PyPI 镜像配置 | Atoman Mirror" />
+    <meta property="og:description" content="为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。" />
+    <meta property="og:url" content="https://mirror.atoman.org/pypi" />
+    <meta property="og:image" content="https://www.atoman.org/atoman-share.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PyPI 镜像配置 | Atoman Mirror" />
+    <meta name="twitter:description" content="为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。" />
+    <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PyPI 镜像配置","description":"为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。","url":"https://mirror.atoman.org/pypi","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
+    <title>PyPI 镜像配置 | Atoman Mirror</title>
+    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+  </head>
+  <body data-static-guide="true">
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
+    <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav"><a href="/docker">Docker Hub</a>
+            <a href="/ghcr">GitHub Container Registry</a>
+            <a href="/pypi" aria-current="page">PyPI</a>
+            <a href="/npm">npm</a>
+            <a href="/go">Go Modules</a>
+            <a href="/ubuntu">Ubuntu APT</a>
+            <a href="/debian">Debian APT</a></nav></div></aside><main id="content" class="main-content" tabindex="-1"><article id="pypi" class="service-page" data-page="pypi">
+          <header class="page-header">
+            <p class="breadcrumb">ATOMAN / MIRROR</p>
+            <div class="title-row">
+              <h1>PyPI</h1>
+              <span class="status"><i></i> 公开服务</span>
+            </div>
+            <p>适用于 pip 与兼容 PyPI 的工具。</p>
+          </header>
+          <section class="endpoint" aria-label="服务地址">
+            <span>索引地址</span><code>mirror.atoman.org/pypi/simple</code>
+          </section>
+          <section class="config-section" aria-labelledby="pypi-config">
+            <div class="section-heading">
+              <h2 id="pypi-config">配置 pip</h2>
+              <span>01</span>
+            </div>
+            <section class="config-method" aria-labelledby="pypi-temporary">
+              <div class="method-heading">
+                <h3 id="pypi-temporary">临时使用</h3>
+                <p>只对当前安装命令生效。</p>
+              </div>
+              <div class="command">
+                <pre><code>python -m pip install --index-url https://mirror.atoman.org/pypi/simple package-name</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+            <section class="config-method" aria-labelledby="pypi-persistent">
+              <div class="method-heading">
+                <h3 id="pypi-persistent">写入配置文件</h3>
+                <p>写入当前用户的 pip 配置。</p>
+              </div>
+              <div class="command">
+                <pre><code>mkdir -p ~/.config/pip
+cat &gt; ~/.config/pip/pip.conf &lt;&lt;'EOF'
+[global]
+index-url = https://mirror.atoman.org/pypi/simple
+EOF</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+          </section>
+        </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">适用于 pip 及兼容 PyPI 的工具。执行 python -m pip install --index-url https://mirror.atoman.org/pypi/simple pip 可验证；删除 ~/.config/pip/pip.conf 中的 index-url 即可恢复。</p></section></main></div>
+    <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
+    <script src="/app.js?v=20260819-2" defer></script>
+  </body>
+</html>

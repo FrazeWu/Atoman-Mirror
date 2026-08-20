@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。" />
+    <link rel="canonical" href="https://mirror.atoman.org/ubuntu" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Ubuntu APT 镜像配置 | Atoman Mirror" />
+    <meta property="og:description" content="为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。" />
+    <meta property="og:url" content="https://mirror.atoman.org/ubuntu" />
+    <meta property="og:image" content="https://www.atoman.org/atoman-share.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ubuntu APT 镜像配置 | Atoman Mirror" />
+    <meta name="twitter:description" content="为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。" />
+    <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Ubuntu APT 镜像配置","description":"为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。","url":"https://mirror.atoman.org/ubuntu","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
+    <title>Ubuntu APT 镜像配置 | Atoman Mirror</title>
+    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+  </head>
+  <body data-static-guide="true">
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
+    <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav"><a href="/docker">Docker Hub</a>
+            <a href="/ghcr">GitHub Container Registry</a>
+            <a href="/pypi">PyPI</a>
+            <a href="/npm">npm</a>
+            <a href="/go">Go Modules</a>
+            <a href="/ubuntu" aria-current="page">Ubuntu APT</a>
+            <a href="/debian">Debian APT</a></nav></div></aside><main id="content" class="main-content" tabindex="-1"><article id="ubuntu" class="service-page" data-page="ubuntu">
+          <header class="page-header">
+            <p class="breadcrumb">ATOMAN / MIRROR</p>
+            <div class="title-row">
+              <h1>Ubuntu</h1>
+              <span class="status"><i></i> 公开服务</span>
+            </div>
+            <p>以下为 Ubuntu 24.04 LTS 的 APT 源配置。</p>
+          </header>
+          <section class="endpoint" aria-label="服务地址">
+            <span>APT 地址</span><code>mirror.atoman.org/ubuntu/</code>
+          </section>
+          <section class="config-section" aria-labelledby="ubuntu-config">
+            <div class="section-heading">
+              <h2 id="ubuntu-config">配置 APT</h2>
+              <span>01</span>
+            </div>
+            <section class="config-method" aria-labelledby="ubuntu-temporary">
+              <div class="method-heading">
+                <h3 id="ubuntu-temporary">临时使用</h3>
+                <p>不改系统源，使用临时列表更新一次索引。</p>
+              </div>
+              <div class="command">
+                <pre><code>list=$(mktemp)
+trap 'rm -f "$list"' EXIT
+cat &gt; "$list" &lt;&lt;'EOF'
+deb https://mirror.atoman.org/ubuntu/ noble main restricted universe multiverse
+deb https://mirror.atoman.org/ubuntu/ noble-updates main restricted universe multiverse
+deb https://mirror.atoman.org/ubuntu-security/ noble-security main restricted universe multiverse
+EOF
+sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+            <section class="config-method" aria-labelledby="ubuntu-persistent">
+              <div class="method-heading">
+                <h3 id="ubuntu-persistent">写入配置文件</h3>
+                <p>适用于 Ubuntu 24.04，将当前官方源文件替换为本站镜像。</p>
+              </div>
+              <div class="command">
+                <pre><code>sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
+sudo tee /etc/apt/sources.list.d/ubuntu.sources &gt;/dev/null &lt;&lt;'EOF'
+Types: deb
+URIs: https://mirror.atoman.org/ubuntu/
+Suites: noble noble-updates
+Components: main restricted universe multiverse
+
+Types: deb
+URIs: https://mirror.atoman.org/ubuntu-security/
+Suites: noble-security
+Components: main restricted universe multiverse
+EOF
+sudo apt update</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+          </section>
+        </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">本页命令适用于 Ubuntu 24.04 (Noble)。先保留自动创建的 .bak 备份；执行 sudo apt update 验证，恢复时将 ubuntu.sources.bak 还原为 ubuntu.sources。</p></section></main></div>
+    <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
+    <script src="/app.js?v=20260819-2" defer></script>
+  </body>
+</html>

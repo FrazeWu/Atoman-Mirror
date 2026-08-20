@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。" />
+    <link rel="canonical" href="https://mirror.atoman.org/debian" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Debian APT 镜像配置 | Atoman Mirror" />
+    <meta property="og:description" content="为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。" />
+    <meta property="og:url" content="https://mirror.atoman.org/debian" />
+    <meta property="og:image" content="https://www.atoman.org/atoman-share.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Debian APT 镜像配置 | Atoman Mirror" />
+    <meta name="twitter:description" content="为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。" />
+    <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Debian APT 镜像配置","description":"为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。","url":"https://mirror.atoman.org/debian","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
+    <title>Debian APT 镜像配置 | Atoman Mirror</title>
+    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+  </head>
+  <body data-static-guide="true">
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
+    <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav"><a href="/docker">Docker Hub</a>
+            <a href="/ghcr">GitHub Container Registry</a>
+            <a href="/pypi">PyPI</a>
+            <a href="/npm">npm</a>
+            <a href="/go">Go Modules</a>
+            <a href="/ubuntu">Ubuntu APT</a>
+            <a href="/debian" aria-current="page">Debian APT</a></nav></div></aside><main id="content" class="main-content" tabindex="-1"><article id="debian" class="service-page" data-page="debian">
+          <header class="page-header">
+            <p class="breadcrumb">ATOMAN / MIRROR</p>
+            <div class="title-row">
+              <h1>Debian</h1>
+              <span class="status"><i></i> 公开服务</span>
+            </div>
+            <p>以下为 Debian 12 Bookworm 的 APT 源配置。</p>
+          </header>
+          <section class="endpoint" aria-label="服务地址">
+            <span>APT 地址</span><code>mirror.atoman.org/debian/</code>
+          </section>
+          <section class="config-section" aria-labelledby="debian-config">
+            <div class="section-heading">
+              <h2 id="debian-config">配置 APT</h2>
+              <span>01</span>
+            </div>
+            <section class="config-method" aria-labelledby="debian-temporary">
+              <div class="method-heading">
+                <h3 id="debian-temporary">临时使用</h3>
+                <p>不改系统源，使用临时列表更新一次索引。</p>
+              </div>
+              <div class="command">
+                <pre><code>list=$(mktemp)
+trap 'rm -f "$list"' EXIT
+cat &gt; "$list" &lt;&lt;'EOF'
+deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
+deb https://mirror.atoman.org/debian/ bookworm-updates main contrib non-free non-free-firmware
+deb https://mirror.atoman.org/debian-security/ bookworm-security main contrib non-free non-free-firmware
+EOF
+sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+            <section class="config-method" aria-labelledby="debian-persistent">
+              <div class="method-heading">
+                <h3 id="debian-persistent">写入配置文件</h3>
+                <p>适用于 Debian 12，先备份现有主源文件再替换。</p>
+              </div>
+              <div class="command">
+                <pre><code>sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+sudo tee /etc/apt/sources.list &gt;/dev/null &lt;&lt;'EOF'
+deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
+deb https://mirror.atoman.org/debian/ bookworm-updates main contrib non-free non-free-firmware
+deb https://mirror.atoman.org/debian-security/ bookworm-security main contrib non-free non-free-firmware
+EOF
+sudo apt update</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+          </section>
+        </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">本页命令适用于 Debian 12 (Bookworm)。先保留自动创建的 sources.list.bak；执行 sudo apt update 验证，恢复时将该备份还原为 /etc/apt/sources.list。</p></section></main></div>
+    <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
+    <script src="/app.js?v=20260819-2" defer></script>
+  </body>
+</html>

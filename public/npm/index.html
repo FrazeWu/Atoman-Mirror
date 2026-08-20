@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。" />
+    <link rel="canonical" href="https://mirror.atoman.org/npm" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="npm 镜像配置 | Atoman Mirror" />
+    <meta property="og:description" content="为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。" />
+    <meta property="og:url" content="https://mirror.atoman.org/npm" />
+    <meta property="og:image" content="https://www.atoman.org/atoman-share.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="npm 镜像配置 | Atoman Mirror" />
+    <meta name="twitter:description" content="为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。" />
+    <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"npm 镜像配置","description":"为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。","url":"https://mirror.atoman.org/npm","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
+    <title>npm 镜像配置 | Atoman Mirror</title>
+    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+  </head>
+  <body data-static-guide="true">
+    <a class="skip-link" href="#content">跳到内容</a>
+    <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
+    <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav"><a href="/docker">Docker Hub</a>
+            <a href="/ghcr">GitHub Container Registry</a>
+            <a href="/pypi">PyPI</a>
+            <a href="/npm" aria-current="page">npm</a>
+            <a href="/go">Go Modules</a>
+            <a href="/ubuntu">Ubuntu APT</a>
+            <a href="/debian">Debian APT</a></nav></div></aside><main id="content" class="main-content" tabindex="-1"><article id="npm" class="service-page" data-page="npm">
+          <header class="page-header">
+            <p class="breadcrumb">ATOMAN / MIRROR</p>
+            <div class="title-row">
+              <h1>npm</h1>
+              <span class="status"><i></i> 公开服务</span>
+            </div>
+            <p>适用于 npm、pnpm 与 Yarn Classic。</p>
+          </header>
+          <section class="endpoint" aria-label="服务地址">
+            <span>Registry 地址</span><code>mirror.atoman.org/npm/</code>
+          </section>
+          <section class="config-section" aria-labelledby="npm-config">
+            <div class="section-heading">
+              <h2 id="npm-config">配置 registry</h2>
+              <span>01</span>
+            </div>
+            <section class="config-method" aria-labelledby="npm-temporary">
+              <div class="method-heading">
+                <h3 id="npm-temporary">临时使用</h3>
+                <p>只对当前安装命令生效。</p>
+              </div>
+              <div class="command">
+                <pre><code>npm install --registry=https://mirror.atoman.org/npm/ package-name</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+            <section class="config-method" aria-labelledby="npm-persistent">
+              <div class="method-heading">
+                <h3 id="npm-persistent">写入配置文件</h3>
+                <p>写入当前用户的 <code>~/.npmrc</code>。</p>
+              </div>
+              <div class="command">
+                <pre><code>cat &gt; ~/.npmrc &lt;&lt;'EOF'
+registry=https://mirror.atoman.org/npm/
+EOF</code></pre>
+                <button class="copy" type="button">复制</button>
+              </div>
+            </section>
+          </section>
+        </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">仅代理公开 npm 包。用 npm view npm --registry=https://mirror.atoman.org/npm/ 验证；删除 ~/.npmrc 中的 registry 配置即可恢复默认 registry。</p></section></main></div>
+    <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
+    <script src="/app.js?v=20260819-2" defer></script>
+  </body>
+</html>

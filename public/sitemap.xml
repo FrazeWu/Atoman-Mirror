@@ -3,4 +3,11 @@
   <url>
     <loc>https://mirror.atoman.org/</loc>
   </url>
+  <url><loc>https://mirror.atoman.org/docker</loc></url>
+  <url><loc>https://mirror.atoman.org/ghcr</loc></url>
+  <url><loc>https://mirror.atoman.org/pypi</loc></url>
+  <url><loc>https://mirror.atoman.org/npm</loc></url>
+  <url><loc>https://mirror.atoman.org/go</loc></url>
+  <url><loc>https://mirror.atoman.org/ubuntu</loc></url>
+  <url><loc>https://mirror.atoman.org/debian</loc></url>
 </urlset>
