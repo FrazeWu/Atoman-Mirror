@@ -45,6 +45,7 @@ function documentFor(service, article) {
     <meta name="twitter:image" content="https://www.atoman.org/atoman-share.png" />
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"${service.name} 镜像配置","description":"${service.description}","url":"${canonical}","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>${service.name} 镜像配置 | Atoman Mirror</title>
+    <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
     <link rel="stylesheet" href="/styles.css?v=20260819-2" />
   </head>
   <body data-static-guide="true">
