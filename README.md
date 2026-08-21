@@ -4,11 +4,9 @@
 
 一个轻量级、高性能的 Docker 镜像代理服务，提供 Registry 镜像加速、离线镜像下载与在线搜索功能。
 
-
 <p align="center">
   <img src="https://count.getloli.com/get/@sky22333.hubproxy?theme=rule34" alt="Visitors">
 </p>
-
 
 ## 特性
 
@@ -69,6 +67,7 @@ curl -fsSL https://raw.githubusercontent.com/sky22333/hubproxy/main/install.sh |
 ### 快速上手
 
 将 `yourdomain.com` 换成你的 `Atoman` 镜像加速地址：
+
 ```bash
 # Docker Hub 官方镜像
 docker pull yourdomain.com/nginx
@@ -88,7 +87,6 @@ docker pull yourdomain.com/ghcr.io/owner/app:tag
 
 - [**中文文档**](https://docs.52013120.xyz/)
 - [**English**](https://docs.52013120.xyz/en/)
-
 
 ## 界面预览
 
