@@ -46,14 +46,20 @@ function documentFor(service, article) {
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"${service.name} 镜像配置","description":"${service.description}","url":"${canonical}","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>${service.name} 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
     <header class="topbar"><div class="topbar-inner"><a class="brand-link" href="/" aria-label="Atoman Mirror 首页"><span class="logo-box" aria-hidden="true"><span class="logo-inner"></span></span><span class="logo-copy"><span class="logo-text">ATOMAN</span><span class="logo-meta">MIRROR <span>beta</span></span></span></a><nav class="top-nav" aria-label="Atoman 导航"><a class="top-nav-link is-active" href="/">镜像</a></nav><div class="topbar-actions"><a class="site-link" href="https://www.atoman.org">返回主站</a></div></div></header>
     <div class="app-shell"><aside class="sidebar" aria-label="镜像服务"><div class="sidebar-inner"><p class="sidebar-label">镜像教程</p><nav class="service-nav">${nav(service.slug)}</nav></div></aside><main id="content" class="main-content" tabindex="-1">${article}<section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">${service.notes}</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>`;
 }

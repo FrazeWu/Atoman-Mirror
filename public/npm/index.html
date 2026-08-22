@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"npm 镜像配置","description":"为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。","url":"https://mirror.atoman.org/npm","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>npm 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>只对当前安装命令生效。</p>
               </div>
               <div class="command">
-                <pre><code>npm install --registry=https://mirror.atoman.org/npm/ package-name</code></pre>
+                <pre><code class="language-bash">npm install --registry=https://mirror.atoman.org/npm/ package-name</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -61,7 +62,7 @@
                 <p>写入当前用户的 <code>~/.npmrc</code>。</p>
               </div>
               <div class="command">
-                <pre><code>cat &gt; ~/.npmrc &lt;&lt;'EOF'
+                <pre><code class="language-ini">cat &gt; ~/.npmrc &lt;&lt;'EOF'
 registry=https://mirror.atoman.org/npm/
 EOF</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -70,6 +71,11 @@ EOF</code></pre>
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">仅代理公开 npm 包。用 npm view npm --registry=https://mirror.atoman.org/npm/ 验证；删除 ~/.npmrc 中的 registry 配置即可恢复默认 registry。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

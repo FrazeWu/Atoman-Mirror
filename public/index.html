@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Atoman Mirror","url":"https://mirror.atoman.org/","description":"Docker、GHCR、PyPI、npm、Go 与 APT 的公开镜像服务。","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>Atoman Mirror | Docker、PyPI、npm、Go 与 APT 镜像</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body>
     <a class="skip-link" href="#content">跳到内容</a>
@@ -103,7 +104,7 @@
                 <p>不修改 Docker daemon，直接使用镜像完整地址。</p>
               </div>
               <div class="command">
-                <pre><code>docker pull mirror.atoman.org/library/alpine:latest</code></pre>
+                <pre><code class="language-bash">docker pull mirror.atoman.org/library/alpine:latest</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -113,7 +114,7 @@
                 <p>让 Docker Hub 拉取默认通过本站镜像。</p>
               </div>
               <div class="command">
-                <pre><code>sudo install -d -m 0755 /etc/docker
+                <pre><code class="language-bash">sudo install -d -m 0755 /etc/docker
 sudo tee /etc/docker/daemon.json >/dev/null <<'EOF'
 {
   "registry-mirrors": ["https://mirror.atoman.org"]
@@ -149,7 +150,7 @@ sudo systemctl restart docker</code></pre>
                 <p>单次拉取时替换镜像前缀。</p>
               </div>
               <div class="command">
-                <pre><code>docker pull mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
+                <pre><code class="language-bash">docker pull mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -159,7 +160,7 @@ sudo systemctl restart docker</code></pre>
                 <p>在项目的 <code>compose.yaml</code> 中固定镜像地址。</p>
               </div>
               <div class="command">
-                <pre><code>services:
+                <pre><code class="language-yaml">services:
   app:
     image: mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -192,7 +193,7 @@ sudo systemctl restart docker</code></pre>
                 <p>只对当前安装命令生效。</p>
               </div>
               <div class="command">
-                <pre><code>python -m pip install --index-url https://mirror.atoman.org/pypi/simple package-name</code></pre>
+                <pre><code class="language-bash">python -m pip install --index-url https://mirror.atoman.org/pypi/simple package-name</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -202,7 +203,7 @@ sudo systemctl restart docker</code></pre>
                 <p>写入当前用户的 pip 配置。</p>
               </div>
               <div class="command">
-                <pre><code>mkdir -p ~/.config/pip
+                <pre><code class="language-bash">mkdir -p ~/.config/pip
 cat &gt; ~/.config/pip/pip.conf &lt;&lt;'EOF'
 [global]
 index-url = https://mirror.atoman.org/pypi/simple
@@ -236,7 +237,7 @@ EOF</code></pre>
                 <p>只对当前安装命令生效。</p>
               </div>
               <div class="command">
-                <pre><code>npm install --registry=https://mirror.atoman.org/npm/ package-name</code></pre>
+                <pre><code class="language-bash">npm install --registry=https://mirror.atoman.org/npm/ package-name</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -246,7 +247,7 @@ EOF</code></pre>
                 <p>写入当前用户的 <code>~/.npmrc</code>。</p>
               </div>
               <div class="command">
-                <pre><code>cat &gt; ~/.npmrc &lt;&lt;'EOF'
+                <pre><code class="language-ini">cat &gt; ~/.npmrc &lt;&lt;'EOF'
 registry=https://mirror.atoman.org/npm/
 EOF</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -278,7 +279,7 @@ EOF</code></pre>
                 <p>仅对当前终端命令生效。</p>
               </div>
               <div class="command">
-                <pre><code>GOPROXY=https://mirror.atoman.org/go,direct \
+                <pre><code class="language-bash">GOPROXY=https://mirror.atoman.org/go,direct \
 GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb" \
 go install example.com/module@latest</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -290,7 +291,7 @@ go install example.com/module@latest</code></pre>
                 <p>由 Go 写入 <code>GOENV</code> 指向的用户配置文件。</p>
               </div>
               <div class="command">
-                <pre><code>go env -w GOPROXY=https://mirror.atoman.org/go,direct
+                <pre><code class="language-bash">go env -w GOPROXY=https://mirror.atoman.org/go,direct
 go env -w GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb"</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
@@ -321,7 +322,7 @@ go env -w GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb"</code></pre
                 <p>不改系统源，使用临时列表更新一次索引。</p>
               </div>
               <div class="command">
-                <pre><code>list=$(mktemp)
+                <pre><code class="language-bash">list=$(mktemp)
 trap 'rm -f "$list"' EXIT
 cat &gt; "$list" &lt;&lt;'EOF'
 deb https://mirror.atoman.org/ubuntu/ noble main restricted universe multiverse
@@ -338,7 +339,7 @@ sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update
                 <p>适用于 Ubuntu 24.04，将当前官方源文件替换为本站镜像。</p>
               </div>
               <div class="command">
-                <pre><code>sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
+                <pre><code class="language-bash">sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
 sudo tee /etc/apt/sources.list.d/ubuntu.sources &gt;/dev/null &lt;&lt;'EOF'
 Types: deb
 URIs: https://mirror.atoman.org/ubuntu/
@@ -380,7 +381,7 @@ sudo apt update</code></pre>
                 <p>不改系统源，使用临时列表更新一次索引。</p>
               </div>
               <div class="command">
-                <pre><code>list=$(mktemp)
+                <pre><code class="language-bash">list=$(mktemp)
 trap 'rm -f "$list"' EXIT
 cat &gt; "$list" &lt;&lt;'EOF'
 deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
@@ -397,7 +398,7 @@ sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update
                 <p>适用于 Debian 12，先备份现有主源文件再替换。</p>
               </div>
               <div class="command">
-                <pre><code>sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+                <pre><code class="language-bash">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 sudo tee /etc/apt/sources.list &gt;/dev/null &lt;&lt;'EOF'
 deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
 deb https://mirror.atoman.org/debian/ bookworm-updates main contrib non-free non-free-firmware
@@ -415,6 +416,11 @@ sudo apt update</code></pre>
     <footer class="site-footer">
       <span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span>
     </footer>
-    <script src="/app.js?v=20260818-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

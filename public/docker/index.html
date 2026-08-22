@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Docker Hub 镜像配置","description":"配置 Atoman Mirror 加速 Docker Hub 公开镜像拉取。","url":"https://mirror.atoman.org/docker","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>Docker Hub 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>不修改 Docker daemon，直接使用镜像完整地址。</p>
               </div>
               <div class="command">
-                <pre><code>docker pull mirror.atoman.org/library/alpine:latest</code></pre>
+                <pre><code class="language-bash">docker pull mirror.atoman.org/library/alpine:latest</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -61,7 +62,7 @@
                 <p>让 Docker Hub 拉取默认通过本站镜像。</p>
               </div>
               <div class="command">
-                <pre><code>sudo install -d -m 0755 /etc/docker
+                <pre><code class="language-bash">sudo install -d -m 0755 /etc/docker
 sudo tee /etc/docker/daemon.json >/dev/null <<'EOF'
 {
   "registry-mirrors": ["https://mirror.atoman.org"]
@@ -74,6 +75,11 @@ sudo systemctl restart docker</code></pre>
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">仅代理公开镜像。配置后可用 docker pull mirror.atoman.org/library/alpine:latest 验证；删除 daemon.json 中的 registry-mirrors 并重启 Docker 即可恢复默认源。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

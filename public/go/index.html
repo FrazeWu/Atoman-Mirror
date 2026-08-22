@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Go Modules 镜像配置","description":"为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。","url":"https://mirror.atoman.org/go","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>Go Modules 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>仅对当前终端命令生效。</p>
               </div>
               <div class="command">
-                <pre><code>GOPROXY=https://mirror.atoman.org/go,direct \
+                <pre><code class="language-bash">GOPROXY=https://mirror.atoman.org/go,direct \
 GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb" \
 go install example.com/module@latest</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -63,7 +64,7 @@ go install example.com/module@latest</code></pre>
                 <p>由 Go 写入 <code>GOENV</code> 指向的用户配置文件。</p>
               </div>
               <div class="command">
-                <pre><code>go env -w GOPROXY=https://mirror.atoman.org/go,direct
+                <pre><code class="language-bash">go env -w GOPROXY=https://mirror.atoman.org/go,direct
 go env -w GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb"</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
@@ -71,6 +72,11 @@ go env -w GOSUMDB="sum.golang.org https://mirror.atoman.org/gosumdb"</code></pre
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">保留 sum.golang.org 的完整性校验。执行 go env GOPROXY GOSUMDB 确认配置；使用 go env -u GOPROXY GOSUMDB 可恢复 Go 默认设置。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

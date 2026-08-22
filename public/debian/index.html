@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Debian APT 镜像配置","description":"为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。","url":"https://mirror.atoman.org/debian","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>Debian APT 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>不改系统源，使用临时列表更新一次索引。</p>
               </div>
               <div class="command">
-                <pre><code>list=$(mktemp)
+                <pre><code class="language-bash">list=$(mktemp)
 trap 'rm -f "$list"' EXIT
 cat &gt; "$list" &lt;&lt;'EOF'
 deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
@@ -68,7 +69,7 @@ sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update
                 <p>适用于 Debian 12，先备份现有主源文件再替换。</p>
               </div>
               <div class="command">
-                <pre><code>sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+                <pre><code class="language-bash">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 sudo tee /etc/apt/sources.list &gt;/dev/null &lt;&lt;'EOF'
 deb https://mirror.atoman.org/debian/ bookworm main contrib non-free non-free-firmware
 deb https://mirror.atoman.org/debian/ bookworm-updates main contrib non-free non-free-firmware
@@ -81,6 +82,11 @@ sudo apt update</code></pre>
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">本页命令适用于 Debian 12 (Bookworm)。先保留自动创建的 sources.list.bak；执行 sudo apt update 验证，恢复时将该备份还原为 /etc/apt/sources.list。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

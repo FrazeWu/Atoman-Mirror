@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Ubuntu APT 镜像配置","description":"为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。","url":"https://mirror.atoman.org/ubuntu","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>Ubuntu APT 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>不改系统源，使用临时列表更新一次索引。</p>
               </div>
               <div class="command">
-                <pre><code>list=$(mktemp)
+                <pre><code class="language-bash">list=$(mktemp)
 trap 'rm -f "$list"' EXIT
 cat &gt; "$list" &lt;&lt;'EOF'
 deb https://mirror.atoman.org/ubuntu/ noble main restricted universe multiverse
@@ -68,7 +69,7 @@ sudo apt-get -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts="-" update
                 <p>适用于 Ubuntu 24.04，将当前官方源文件替换为本站镜像。</p>
               </div>
               <div class="command">
-                <pre><code>sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
+                <pre><code class="language-bash">sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
 sudo tee /etc/apt/sources.list.d/ubuntu.sources &gt;/dev/null &lt;&lt;'EOF'
 Types: deb
 URIs: https://mirror.atoman.org/ubuntu/
@@ -87,6 +88,11 @@ sudo apt update</code></pre>
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">本页命令适用于 Ubuntu 24.04 (Noble)。先保留自动创建的 .bak 备份；执行 sudo apt update 验证，恢复时将 ubuntu.sources.bak 还原为 ubuntu.sources。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>

@@ -17,7 +17,8 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"GitHub Container Registry 镜像配置","description":"通过 Atoman Mirror 拉取公开 GHCR 容器镜像。","url":"https://mirror.atoman.org/ghcr","publisher":{"@type":"Organization","name":"Atoman","url":"https://www.atoman.org/"}}</script>
     <title>GitHub Container Registry 镜像配置 | Atoman Mirror</title>
     <link rel="icon" type="image/png" sizes="480x480" href="/favicon.png" />
-    <link rel="stylesheet" href="/styles.css?v=20260819-2" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260819-3" />
   </head>
   <body data-static-guide="true">
     <a class="skip-link" href="#content">跳到内容</a>
@@ -51,7 +52,7 @@
                 <p>单次拉取时替换镜像前缀。</p>
               </div>
               <div class="command">
-                <pre><code>docker pull mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
+                <pre><code class="language-bash">docker pull mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
                 <button class="copy" type="button">复制</button>
               </div>
             </section>
@@ -61,7 +62,7 @@
                 <p>在项目的 <code>compose.yaml</code> 中固定镜像地址。</p>
               </div>
               <div class="command">
-                <pre><code>services:
+                <pre><code class="language-yaml">services:
   app:
     image: mirror.atoman.org/ghcr.io/owner/image:tag</code></pre>
                 <button class="copy" type="button">复制</button>
@@ -71,6 +72,11 @@
           </section>
         </article><section class="config-section" aria-labelledby="guide-notes"><div class="section-heading"><h2 id="guide-notes">验证与恢复</h2><span>02</span></div><p class="hint">仅支持公开 GHCR 镜像；私有镜像认证未开放。用公开镜像完成 docker pull 验证，项目不再使用本站前缀即可恢复默认拉取方式。</p></section></main></div>
     <footer class="site-footer"><span>ATOMAN MIRROR</span><span>仅代理公开上游资源。</span></footer>
-    <script src="/app.js?v=20260819-2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-ini.min.js" defer></script>
+    <script src="/app.js?v=20260819-3" defer></script>
   </body>
 </html>
