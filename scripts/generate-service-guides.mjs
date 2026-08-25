@@ -5,29 +5,85 @@ import { resolve } from "node:path";
 const publicDir = resolve(import.meta.dirname, "../public");
 const canonicalOrigin = "https://mirror.atoman.org";
 const services = [
-  { id: "docker-hub", slug: "docker", name: "Docker Hub", description: "配置 Atoman Mirror 加速 Docker Hub 公开镜像拉取。", notes: "仅代理公开镜像。配置后可用 docker pull mirror.atoman.org/library/alpine:latest 验证；删除 daemon.json 中的 registry-mirrors 并重启 Docker 即可恢复默认源。" },
-  { id: "ghcr", slug: "ghcr", name: "GitHub Container Registry", description: "通过 Atoman Mirror 拉取公开 GHCR 容器镜像。", notes: "仅支持公开 GHCR 镜像；私有镜像认证未开放。用公开镜像完成 docker pull 验证，项目不再使用本站前缀即可恢复默认拉取方式。" },
-  { id: "pypi", slug: "pypi", name: "PyPI", description: "为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。", notes: "适用于 pip 及兼容 PyPI 的工具。执行 python -m pip install --index-url https://mirror.atoman.org/pypi/simple pip 可验证；删除 ~/.config/pip/pip.conf 中的 index-url 即可恢复。" },
-  { id: "npm", slug: "npm", name: "npm", description: "为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。", notes: "仅代理公开 npm 包。用 npm view npm --registry=https://mirror.atoman.org/npm/ 验证；删除 ~/.npmrc 中的 registry 配置即可恢复默认 registry。" },
-  { id: "go", slug: "go", name: "Go Modules", description: "为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。", notes: "保留 sum.golang.org 的完整性校验。执行 go env GOPROXY GOSUMDB 确认配置；使用 go env -u GOPROXY GOSUMDB 可恢复 Go 默认设置。" },
-  { id: "ubuntu", slug: "ubuntu", name: "Ubuntu APT", description: "为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。", notes: "本页命令适用于 Ubuntu 24.04 (Noble)。先保留自动创建的 .bak 备份；执行 sudo apt update 验证，恢复时将 ubuntu.sources.bak 还原为 ubuntu.sources。" },
-  { id: "debian", slug: "debian", name: "Debian APT", description: "为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。", notes: "本页命令适用于 Debian 12 (Bookworm)。先保留自动创建的 sources.list.bak；执行 sudo apt update 验证，恢复时将该备份还原为 /etc/apt/sources.list。" },
+	{
+		id: "docker-hub",
+		slug: "docker",
+		name: "Docker Hub",
+		description: "配置 Atoman Mirror 加速 Docker Hub 公开镜像拉取。",
+		notes:
+			"仅代理公开镜像。配置后可用 docker pull mirror.atoman.org/library/alpine:latest 验证；删除 daemon.json 中的 registry-mirrors 并重启 Docker 即可恢复默认源。",
+	},
+	{
+		id: "ghcr",
+		slug: "ghcr",
+		name: "GitHub Container Registry",
+		description: "通过 Atoman Mirror 拉取公开 GHCR 容器镜像。",
+		notes:
+			"仅支持公开 GHCR 镜像；私有镜像认证未开放。用公开镜像完成 docker pull 验证，项目不再使用本站前缀即可恢复默认拉取方式。",
+	},
+	{
+		id: "pypi",
+		slug: "pypi",
+		name: "PyPI",
+		description: "为 pip 配置 Atoman Mirror 的 PyPI 公开包索引。",
+		notes:
+			"适用于 pip 及兼容 PyPI 的工具。执行 python -m pip install --index-url https://mirror.atoman.org/pypi/simple pip 可验证；删除 ~/.config/pip/pip.conf 中的 index-url 即可恢复。",
+	},
+	{
+		id: "npm",
+		slug: "npm",
+		name: "npm",
+		description: "为 npm、pnpm 与 Yarn Classic 配置 Atoman Mirror registry。",
+		notes:
+			"仅代理公开 npm 包。用 npm view npm --registry=https://mirror.atoman.org/npm/ 验证；删除 ~/.npmrc 中的 registry 配置即可恢复默认 registry。",
+	},
+	{
+		id: "go",
+		slug: "go",
+		name: "Go Modules",
+		description: "为 Go Modules 配置 Atoman Mirror 模块代理与校验服务。",
+		notes:
+			"保留 sum.golang.org 的完整性校验。执行 go env GOPROXY GOSUMDB 确认配置；使用 go env -u GOPROXY GOSUMDB 可恢复 Go 默认设置。",
+	},
+	{
+		id: "ubuntu",
+		slug: "ubuntu",
+		name: "Ubuntu APT",
+		description: "为 Ubuntu 24.04 LTS 配置 Atoman Mirror APT 源。",
+		notes:
+			"本页命令适用于 Ubuntu 24.04 (Noble)。先保留自动创建的 .bak 备份；执行 sudo apt update 验证，恢复时将 ubuntu.sources.bak 还原为 ubuntu.sources。",
+	},
+	{
+		id: "debian",
+		slug: "debian",
+		name: "Debian APT",
+		description: "为 Debian 12 Bookworm 配置 Atoman Mirror APT 源。",
+		notes:
+			"本页命令适用于 Debian 12 (Bookworm)。先保留自动创建的 sources.list.bak；执行 sudo apt update 验证，恢复时将该备份还原为 /etc/apt/sources.list。",
+	},
 ];
 
 function extractArticle(source, id) {
-  const start = source.indexOf(`<article id="${id}"`);
-  if (start < 0) throw new Error(`Missing ${id} tutorial`);
-  const end = source.indexOf("</article>", start);
-  return source.slice(start, end + "</article>".length).replace(/ hidden(?=>)/, "");
+	const start = source.indexOf(`<article id="${id}"`);
+	if (start < 0) throw new Error(`Missing ${id} tutorial`);
+	const end = source.indexOf("</article>", start);
+	return source
+		.slice(start, end + "</article>".length)
+		.replace(/ hidden(?=>)/, "");
 }
 
 function nav(current) {
-  return services.map(({ slug, name }) => `<a href="/${slug}"${slug === current ? ' aria-current="page"' : ""}>${name}</a>`).join("\n            ");
+	return services
+		.map(
+			({ slug, name }) =>
+				`<a href="/${slug}"${slug === current ? ' aria-current="page"' : ""}>${name}</a>`,
+		)
+		.join("\n            ");
 }
 
 function documentFor(service, article) {
-  const canonical = `${canonicalOrigin}/${service.slug}`;
-  return `<!doctype html>
+	const canonical = `${canonicalOrigin}/${service.slug}`;
+	return `<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -67,7 +123,10 @@ function documentFor(service, article) {
 const source = await readFile(resolve(publicDir, "index.html"), "utf8");
 await rm(resolve(publicDir, "guides"), { recursive: true, force: true });
 for (const service of services) {
-  const directory = resolve(publicDir, service.slug);
-  await mkdir(directory, { recursive: true });
-  await writeFile(resolve(directory, "index.html"), documentFor(service, extractArticle(source, service.id)));
+	const directory = resolve(publicDir, service.slug);
+	await mkdir(directory, { recursive: true });
+	await writeFile(
+		resolve(directory, "index.html"),
+		documentFor(service, extractArticle(source, service.id)),
+	);
 }
