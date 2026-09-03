@@ -24,7 +24,7 @@ const variants: Record<NonNullable<typeof props.variant>, string> = {
 
 const sizes: Record<NonNullable<typeof props.size>, string> = {
   default: 'h-11 px-5 text-base',
-  sm: 'h-9 px-3 text-sm',
+  sm: 'h-10 px-3 text-sm',
   icon: 'size-11',
 }
 </script>
@@ -34,7 +34,7 @@ const sizes: Record<NonNullable<typeof props.size>, string> = {
     type="button"
     :disabled="disabled"
     :class="cn(
-      'inline-flex items-center justify-center gap-1.5 rounded font-medium outline-none transition-[opacity,transform,background-color,color] duration-150 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
+      'inline-flex items-center justify-center gap-1.5 rounded font-medium outline-none transition-[opacity,transform,background-color,color] duration-150 ease-out active:translate-y-px focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
       variants[variant],
       sizes[size],
       props.class,

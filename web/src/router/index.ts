@@ -30,8 +30,8 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  const title = (to.meta.title as string) || 'ATP'
-  document.title = `${title} · ATP`
+  const title = (to.meta.title as string) || 'Atoman Mirror'
+  document.title = `${title} · Atoman Mirror`
 })
 
 export default router

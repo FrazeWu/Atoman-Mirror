@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:ui": "node --test tests/ui-contract.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.8",

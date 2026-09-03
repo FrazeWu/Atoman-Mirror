@@ -1,10 +1,12 @@
 /* HubProxy docs */
 
 :root {
-  --sl-color-accent: #2563eb;
-  --sl-color-accent-high: #1d4ed8;
-  --sl-sidebar-width: 15rem;
-  --sl-toc-width: 18rem;
+  --sl-color-accent-low: #dff3e9;
+  --sl-color-accent: #087f5b;
+  --sl-color-accent-high: #075f45;
+  --sl-sidebar-width: 16rem;
+  --sl-toc-width: 16rem;
+  --sl-content-width: 52rem;
   --hub-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --hub-duration-fast: 0.15s;
   --hub-duration: 0.22s;
@@ -14,6 +16,27 @@
 html {
   -webkit-tap-highlight-color: transparent;
   scroll-padding-top: calc(1.5rem + var(--sl-nav-height) + var(--sl-mobile-toc-height));
+}
+
+*,
+*::before,
+*::after {
+  letter-spacing: 0 !important;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #173629;
+  --sl-color-accent: #5ed0a3;
+  --sl-color-accent-high: #bcebd4;
+}
+
+.header {
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  box-shadow: none;
+}
+
+.site-title {
+  font-weight: 700;
 }
 
 @media (min-width: 72rem) {
@@ -149,6 +172,14 @@ starlight-menu-button button {
     box-shadow var(--hub-duration-fast) var(--hub-ease);
 }
 
+site-search button,
+starlight-menu-button button,
+starlight-theme-select label,
+starlight-lang-select label {
+  min-height: 2.5rem;
+  border-radius: 4px;
+}
+
 site-search button:hover,
 starlight-menu-button button:hover {
   transform: scale(1.04);
@@ -176,6 +207,14 @@ starlight-lang-select label {
     border-color var(--hub-duration) var(--hub-ease),
     transform var(--hub-duration) var(--hub-ease),
     box-shadow var(--hub-duration) var(--hub-ease);
+}
+
+.sl-link-button,
+.pagination-links a,
+.card,
+.sl-markdown-content .starlight-aside,
+.expressive-code figure {
+  border-radius: 4px !important;
 }
 
 /* minimal 为文本链式按钮，勿叠加卡片式 hover（首页 GitHub 按钮） */
@@ -229,9 +268,14 @@ starlight-lang-select label {
   transform: scale(1.06);
 }
 
+.card {
+  box-shadow: none;
+}
+
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--sl-shadow-md);
+  transform: translateY(-1px);
+  border-color: var(--sl-color-accent);
+  box-shadow: none;
 }
 
 .card-grid.stagger .card {
@@ -262,11 +306,39 @@ starlight-lang-select label {
   animation-delay: 0.24s;
 }
 
+.hero {
+  display: block;
+  max-width: 52rem;
+  padding-block: 3rem 2rem;
+}
+
+.hero h1 {
+  max-width: 52rem;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  line-height: 1.08;
+}
+
+.hero .tagline {
+  max-width: 42rem;
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
 .hero img {
-  width: min(100%, 22rem);
-  height: auto;
-  border-radius: 1rem;
-  box-shadow: var(--sl-shadow-md);
+  display: none;
+}
+
+.sl-markdown-content h2 {
+  margin-top: 2.5rem;
+  font-size: 1.5rem;
+}
+
+.sl-markdown-content h3 {
+  font-size: 1.125rem;
+}
+
+.sl-markdown-content code:not(:where(.not-content *)) {
+  border-radius: 3px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -280,10 +352,32 @@ starlight-lang-select label {
   margin-block: 1rem;
   padding: 0.75rem 1rem;
   border: 1px solid var(--sl-color-gray-5);
-  border-radius: 0.5rem;
+  border-radius: 4px;
   transition:
     background-color var(--hub-duration-fast) var(--hub-ease),
     border-color var(--hub-duration-fast) var(--hub-ease);
+}
+
+@media (max-width: 49.999rem) {
+  .hero {
+    padding-block: 1.75rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2.25rem;
+  }
+
+  .hero .tagline {
+    font-size: 1rem;
+  }
+
+  .card-grid {
+    gap: 0.75rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
 }
 
 .sl-markdown-content details[open] {
