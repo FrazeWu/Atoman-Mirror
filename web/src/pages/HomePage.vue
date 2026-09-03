@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import hljs from 'highlight.js/lib/core'
 import bash from 'highlight.js/lib/languages/bash'
 import json from 'highlight.js/lib/languages/json'
-import { Check, Container, Copy, Settings2 } from 'lucide-vue-next'
+import { BookOpen, Check, Container, Copy, Download, Search, Settings2 } from 'lucide-vue-next'
 import Button from '@/components/ui/Button.vue'
 import PageHero from '@/components/PageHero.vue'
 import { copyText } from '@/lib/utils'
@@ -12,6 +12,7 @@ hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('json', json)
 
 const configCopied = ref(false)
+const copyHint = ref('')
 const host = computed(() => window.location.host)
 
 const dockerExamples = computed(() => [
@@ -51,6 +52,11 @@ const highlightedVerifyDockerCommand = highlightCode(verifyDockerCommand, 'bash'
 
 async function onCopyConfig() {
   configCopied.value = await copyText(dockerConfig.value)
+  copyHint.value = configCopied.value ? 'Docker 配置已复制' : '复制失败，请手动选择配置内容'
+  setTimeout(() => {
+    copyHint.value = ''
+    configCopied.value = false
+  }, 2000)
 }
 </script>
 
@@ -69,6 +75,21 @@ async function onCopyConfig() {
       </div>
     </PageHero>
 
+    <nav class="quick-actions" aria-label="常用工具">
+      <RouterLink to="/search" class="quick-action">
+        <span class="quick-action__icon"><Search class="size-4" /></span>
+        <span><strong>搜索镜像</strong><small>查看版本、架构与拉取命令</small></span>
+      </RouterLink>
+      <RouterLink to="/images" class="quick-action">
+        <span class="quick-action__icon"><Download class="size-4" /></span>
+        <span><strong>离线下载</strong><small>生成可供 docker load 的归档</small></span>
+      </RouterLink>
+      <a href="https://docs.52013120.xyz/" class="quick-action">
+        <span class="quick-action__icon"><BookOpen class="size-4" /></span>
+        <span><strong>部署文档</strong><small>反向代理、安全与配置说明</small></span>
+      </a>
+    </nav>
+
     <section class="content-section" aria-labelledby="docker-title">
       <div class="section-heading section-heading--stacked">
         <div>
@@ -86,12 +107,19 @@ async function onCopyConfig() {
               <h3>写入 Docker 配置</h3>
               <p>编辑服务器上的 <code>/etc/docker/daemon.json</code></p>
             </div>
-            <Button variant="ghost" size="icon" aria-label="复制 Docker 配置" @click="onCopyConfig">
+            <Button
+              variant="ghost"
+              size="icon"
+              :aria-label="configCopied ? 'Docker 配置已复制' : '复制 Docker 配置'"
+              :title="configCopied ? '已复制' : '复制 Docker 配置'"
+              @click="onCopyConfig"
+            >
               <Check v-if="configCopied" class="size-4" />
               <Copy v-else class="size-4" />
             </Button>
           </div>
           <pre class="code-block code-block--json" data-language="json"><code v-html="highlightedDockerConfig"></code></pre>
+          <p class="sr-only" aria-live="polite">{{ copyHint }}</p>
         </div>
 
         <div class="config-card config-card--commands config-card--combined">

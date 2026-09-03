@@ -21,7 +21,7 @@ const props = defineProps<{
     :placeholder="placeholder"
     :disabled="disabled"
     :class="cn(
-      'h-11 w-full rounded border border-input bg-transparent px-3.5 text-base outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50',
+      'h-11 w-full rounded border border-input bg-background px-3.5 text-base outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50',
       props.class,
     )"
   >

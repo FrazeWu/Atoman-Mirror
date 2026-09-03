@@ -3,15 +3,14 @@ defineProps<{
   eyebrow: string
   title: string
   subtitle: string
-  gradient?: boolean
 }>()
 </script>
 
 <template>
   <header class="page-hero">
     <p class="eyebrow">{{ eyebrow }}</p>
-    <h1 class="display-title" :class="{ 'gradient-text': gradient }">{{ title }}</h1>
-    <p class="mx-auto max-w-xl text-lg text-muted-foreground sm:text-xl">
+    <h1 class="display-title">{{ title }}</h1>
+    <p class="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
       {{ subtitle }}
     </p>
     <slot />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Loader2 } from 'lucide-vue-next'
+import { Archive, Boxes, CircleAlert, CircleCheck, Loader2 } from 'lucide-vue-next'
 import {
   fetchImageInfo,
   prepareBatchDownload,
@@ -101,37 +101,46 @@ async function onBatchSubmit() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl">
+  <div>
     <PageHero
       eyebrow="Offline Image"
       title="离线镜像"
       subtitle="流式下载，兼容 docker load，支持多架构。"
     />
 
-    <section class="field-block">
-      <h2 class="text-center text-sm font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-        单镜像
-      </h2>
+    <div class="tool-grid">
+    <section class="tool-panel field-block">
+      <header class="tool-panel__header">
+        <span class="tool-panel__icon"><Archive class="size-4" /></span>
+        <div>
+          <h2>单镜像下载</h2>
+          <p>适合临时迁移或在离线设备上导入一个镜像。</p>
+        </div>
+      </header>
 
       <Transition name="fade" mode="out-in">
-        <p v-if="singleError" key="error" class="text-center text-destructive">{{ singleError }}</p>
-        <p v-else-if="singleStatus" key="status" class="flex items-center justify-center gap-2 text-muted-foreground">
+        <p v-if="singleError" key="error" class="feedback feedback--error" role="alert">
+          <CircleAlert class="size-4 shrink-0" />
+          {{ singleError }}
+        </p>
+        <p v-else-if="singleStatus" key="status" class="feedback feedback--status" role="status">
           <Loader2 v-if="singleLoading" class="size-4 animate-spin" />
+          <CircleCheck v-else class="size-4" />
           {{ singleStatus }}
         </p>
       </Transition>
 
       <label class="block space-y-1.5">
-        <span>镜像名称</span>
+        <span class="field-label">镜像名称</span>
         <Input v-model="singleImage" placeholder="nginx 或 user/app:tag" />
       </label>
       <label class="block space-y-1.5">
-        <span>目标架构（可选）</span>
+        <span class="field-label">目标架构（可选）</span>
         <Input v-model="singlePlatform" placeholder="linux/amd64" />
       </label>
       <div class="flex items-center justify-between py-1">
-        <span>压缩层</span>
-        <Switch v-model:checked="singleCompressed" />
+        <span class="field-label">压缩镜像层</span>
+        <Switch v-model:checked="singleCompressed" aria-label="压缩单镜像层" />
       </div>
       <Button class="w-full" :disabled="singleLoading" @click="onSingleSubmit">
         <Loader2 v-if="singleLoading" class="size-4 animate-spin" />
@@ -139,38 +148,47 @@ async function onBatchSubmit() {
       </Button>
     </section>
 
-    <section class="section-gap field-block">
-      <h2 class="text-center text-sm font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-        批量下载
-      </h2>
+    <section class="tool-panel field-block">
+      <header class="tool-panel__header">
+        <span class="tool-panel__icon"><Boxes class="size-4" /></span>
+        <div>
+          <h2>批量打包</h2>
+          <p>每行输入一个镜像，一次生成可下载的归档。</p>
+        </div>
+      </header>
 
       <Transition name="fade" mode="out-in">
-        <p v-if="batchError" key="error" class="text-center text-destructive">{{ batchError }}</p>
-        <p v-else-if="batchStatus" key="status" class="flex items-center justify-center gap-2 text-muted-foreground">
+        <p v-if="batchError" key="error" class="feedback feedback--error" role="alert">
+          <CircleAlert class="size-4 shrink-0" />
+          {{ batchError }}
+        </p>
+        <p v-else-if="batchStatus" key="status" class="feedback feedback--status" role="status">
           <Loader2 v-if="batchLoading" class="size-4 animate-spin" />
+          <CircleCheck v-else class="size-4" />
           {{ batchStatus }}
         </p>
       </Transition>
 
       <label class="block space-y-1.5">
-        <span>镜像列表</span>
+        <span class="field-label">镜像列表</span>
         <Textarea
           v-model="batchText"
           placeholder="alpine&#10;redis:alpine&#10;user/app:1.0"
         />
       </label>
       <label class="block space-y-1.5">
-        <span>目标架构（可选）</span>
+        <span class="field-label">目标架构（可选）</span>
         <Input v-model="batchPlatform" placeholder="linux/amd64" />
       </label>
       <div class="flex items-center justify-between py-1">
-        <span>压缩层</span>
-        <Switch v-model:checked="batchCompressed" />
+        <span class="field-label">压缩镜像层</span>
+        <Switch v-model:checked="batchCompressed" aria-label="压缩批量镜像层" />
       </div>
       <Button class="w-full" :disabled="batchLoading" @click="onBatchSubmit">
         <Loader2 v-if="batchLoading" class="size-4 animate-spin" />
         {{ batchLoading ? '准备中...' : '批量下载' }}
       </Button>
     </section>
+    </div>
   </div>
 </template>

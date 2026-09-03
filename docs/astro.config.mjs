@@ -6,8 +6,8 @@ export default defineConfig({
   base: '/',
   integrations: [
     starlight({
-      title: 'HubProxy',
-      description: 'Docker 与 GitHub 加速代理服务文档',
+      title: 'Atoman Mirror',
+      description: 'Docker 镜像加速与离线镜像服务文档',
       defaultLocale: 'root',
       locales: {
         root: {
@@ -20,7 +20,7 @@ export default defineConfig({
         },
       },
       logo: {
-        alt: 'HubProxy',
+        alt: 'Atoman Mirror',
         src: './src/assets/logo.svg',
       },
       social: [

@@ -19,7 +19,7 @@ const props = defineProps<{
     :placeholder="placeholder"
     :disabled="disabled"
     :class="cn(
-      'min-h-36 w-full rounded-lg border border-input bg-transparent px-3.5 py-3 text-base outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50',
+      'min-h-36 w-full resize-y rounded border border-input bg-background px-3.5 py-3 text-base outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50',
       props.class,
     )"
   />

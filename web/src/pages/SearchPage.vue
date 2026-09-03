@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronLeft, ChevronRight, Copy, Loader2, Search } from 'lucide-vue-next'
+import { ArrowLeft, BadgeCheck, ChevronLeft, ChevronRight, Copy, Download, Loader2, Search, Star } from 'lucide-vue-next'
 import {
   fetchTags,
   searchImages,
@@ -228,8 +228,8 @@ watch(
     />
 
     <Transition name="fade" mode="out-in">
-      <div v-if="!selected" key="search" class="mx-auto max-w-3xl space-y-6">
-        <div class="flex flex-col gap-3 sm:flex-row">
+      <div v-if="!selected" key="search" class="mx-auto max-w-4xl space-y-6">
+        <div class="surface-panel flex flex-col gap-3 sm:flex-row">
           <Input
             v-model="query"
             class="sm:flex-1"
@@ -245,42 +245,43 @@ watch(
 
         <p
           v-if="searchError"
-          class="text-center text-destructive"
+          class="feedback feedback--error"
+          role="alert"
         >
           {{ searchError }}
         </p>
 
-        <div v-if="searching" class="space-y-3">
-          <div v-for="i in 3" :key="i" class="h-16 animate-pulse rounded-xl bg-muted" />
+        <div v-if="searching" class="space-y-3" role="status" aria-label="正在搜索镜像">
+          <div v-for="i in 3" :key="i" class="h-16 animate-pulse rounded bg-muted" />
         </div>
 
         <div v-else-if="hasResults" class="space-y-2">
-          <p class="text-center text-muted-foreground">
-            共 {{ resultCount }} 条结果
+          <p class="result-summary">
+            <span>共 {{ resultCount }} 条结果</span>
             <template v-if="totalPages > 1"> · 第 {{ resultsPage }} / {{ totalPages }} 页</template>
           </p>
-          <div class="divide-y divide-border border-y border-border">
+          <div class="result-list">
             <button
               v-for="item in results"
               :key="`${item.namespace}/${item.name}`"
               type="button"
-              class="w-full py-4 text-left transition-colors duration-150 hover:text-primary"
+              class="result-row"
               @click="loadTagPage(item, 1)"
             >
               <div class="mb-1 flex flex-wrap items-center gap-2">
                 <span class="text-base font-medium">{{ item.displayName }}</span>
                 <span
                   v-if="item.raw.is_official"
-                  class="rounded-full bg-primary/12 px-2 py-0.5 text-[11px] text-primary"
-                >官方</span>
+                  class="inline-flex items-center gap-1 rounded bg-primary/12 px-2 py-0.5 text-[11px] text-primary"
+                ><BadgeCheck class="size-3" />官方</span>
                 <span
                   v-if="item.raw.star_count"
-                  class="text-xs text-muted-foreground"
-                >★ {{ formatNumber(item.raw.star_count) }}</span>
+                  class="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                ><Star class="size-3" />{{ formatNumber(item.raw.star_count) }}</span>
                 <span
                   v-if="item.raw.pull_count"
-                  class="text-xs text-muted-foreground"
-                >⬇ {{ formatNumber(item.raw.pull_count) }}</span>
+                  class="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                ><Download class="size-3" />{{ formatNumber(item.raw.pull_count) }}</span>
               </div>
               <p class="line-clamp-2 text-muted-foreground">
                 {{ item.raw.short_description || '暂无描述' }}
@@ -291,6 +292,7 @@ watch(
             <Button
               variant="outline"
               size="sm"
+              aria-label="上一页"
               :disabled="searching || resultsPage <= 1"
               @click="loadResultsPage(resultsPage - 1)"
             >
@@ -300,6 +302,7 @@ watch(
             <Button
               variant="outline"
               size="sm"
+              aria-label="下一页"
               :disabled="searching || !hasMoreResults"
               @click="loadResultsPage(resultsPage + 1)"
             >
@@ -312,10 +315,11 @@ watch(
       <div v-else key="tags" class="mx-auto max-w-3xl space-y-6">
         <button
           type="button"
-          class="text-muted-foreground transition-colors hover:text-primary"
+          class="inline-flex min-h-10 items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
           @click="backToResults"
         >
-          ← 返回搜索结果
+          <ArrowLeft class="size-4" />
+          返回搜索结果
         </button>
 
         <div class="space-y-2 text-center">
@@ -323,14 +327,14 @@ watch(
             <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ selected.fullRepoName }}</h2>
             <span
               v-if="selected.raw.is_official"
-              class="rounded-full bg-primary/12 px-2 py-0.5 text-[11px] text-primary"
-            >官方</span>
+              class="inline-flex items-center gap-1 rounded bg-primary/12 px-2 py-0.5 text-[11px] text-primary"
+            ><BadgeCheck class="size-3" />官方</span>
           </div>
           <p class="text-base text-muted-foreground">
             {{ selected.raw.short_description || '暂无描述' }}
           </p>
           <Transition name="fade">
-            <p v-if="copyHint" class="text-muted-foreground">{{ copyHint }}</p>
+            <p v-if="copyHint" class="text-muted-foreground" aria-live="polite">{{ copyHint }}</p>
           </Transition>
         </div>
 
@@ -340,6 +344,7 @@ watch(
             <Button
               variant="outline"
               size="sm"
+              aria-label="上一页"
               :disabled="tagsLoading || tagsPage <= 1"
               @click="loadTagPage(selected, tagsPage - 1)"
             >
@@ -349,6 +354,7 @@ watch(
             <Button
               variant="outline"
               size="sm"
+              aria-label="下一页"
               :disabled="tagsLoading || !tagsHasMore"
               @click="loadTagPage(selected, tagsPage + 1)"
             >
@@ -361,18 +367,18 @@ watch(
           </div>
         </div>
 
-        <p v-if="tagsError" class="text-center text-destructive">{{ tagsError }}</p>
-        <div v-else-if="tagsLoading" class="space-y-3">
-          <div v-for="i in 5" :key="i" class="h-14 animate-pulse rounded-xl bg-muted" />
+        <p v-if="tagsError" class="feedback feedback--error" role="alert">{{ tagsError }}</p>
+        <div v-else-if="tagsLoading" class="space-y-3" role="status" aria-label="正在加载镜像标签">
+          <div v-for="i in 5" :key="i" class="h-14 animate-pulse rounded bg-muted" />
         </div>
         <p v-else-if="displayTags.length === 0" class="text-center text-muted-foreground">
           没有匹配的标签
         </p>
-        <div v-else class="divide-y divide-border border-y border-border">
+        <div v-else class="result-list">
           <div
             v-for="{ tag, archs, size } in displayTags"
             :key="tag.name"
-            class="flex items-start justify-between gap-3 py-4"
+            class="flex items-start justify-between gap-3 px-4 py-4"
           >
             <div class="min-w-0 space-y-1.5">
               <p class="truncate text-base font-medium">{{ tag.name }}</p>
@@ -384,7 +390,7 @@ watch(
                 <span
                   v-for="arch in archs"
                   :key="arch"
-                  class="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[11px] text-primary"
+                  class="rounded bg-primary/10 px-2 py-0.5 font-mono text-[11px] text-primary"
                 >{{ arch }}</span>
               </div>
             </div>
