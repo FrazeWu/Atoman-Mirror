@@ -42,6 +42,19 @@ test('async product feedback is announced to assistive technology', () => {
   assert.match(search, /aria-live="polite"/)
 })
 
+test('nginx forwards the embedded app and API routes to HubProxy', () => {
+  const nginx = readMirror('nginx/mirror.atoman.org.conf')
+
+  assert.ok(nginx.includes("location ^~ /api/ {"))
+  assert.ok(nginx.includes("location = / {"))
+  assert.ok(nginx.includes("location / {"))
+  assert.ok(nginx.includes("proxy_pass http://127.0.0.1:50001;"))
+  assert.ok(nginx.includes("proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"))
+  assert.ok(nginx.includes("proxy_set_header X-Forwarded-Proto $scheme;"))
+  assert.ok(!nginx.includes("atoman-mirror-static-security.conf"))
+  assert.ok(nginx.includes("include /etc/nginx/snippets/static-security.conf;"))
+})
+
 test('documentation home is compact and does not reserve the first viewport for artwork', () => {
   const styles = readMirror('docs/src/styles/custom.css')
   const zhHome = readMirror('docs/src/content/docs/index.mdx')
