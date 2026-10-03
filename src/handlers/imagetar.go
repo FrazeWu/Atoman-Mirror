@@ -508,7 +508,7 @@ func (is *ImageStreamer) streamDockerFormatWithReturn(ctx context.Context, tarWr
 
 	singleManifest := map[string]interface{}{
 		"Config":   configDigest.String() + ".json",
-		"RepoTags": []string{imageRef},
+		"RepoTags": repoTagsForImageRef(imageRef),
 		"Layers": func() []string {
 			var layers []string
 			for _, digest := range layerDigests {
@@ -518,13 +518,7 @@ func (is *ImageStreamer) streamDockerFormatWithReturn(ctx context.Context, tarWr
 		}(),
 	}
 
-	repositories := make(map[string]map[string]string)
-	parts := strings.Split(imageRef, ":")
-	if len(parts) == 2 {
-		repoName := parts[0]
-		tag := parts[1]
-		repositories[repoName] = map[string]string{tag: configDigest.String()}
-	}
+	repositories := repositoriesForImageRef(imageRef, configDigest.String())
 
 	if manifestOut != nil && repositoriesOut != nil {
 		*manifestOut = singleManifest
@@ -551,6 +545,9 @@ func (is *ImageStreamer) streamDockerFormatWithReturn(ctx context.Context, tarWr
 
 	if _, err := tarWriter.Write(manifestData); err != nil {
 		return err
+	}
+	if len(repositories) == 0 {
+		return nil
 	}
 
 	repositoriesData, err := json.Marshal(repositories)
@@ -595,6 +592,37 @@ func (is *ImageStreamer) processImageForBatch(ctx context.Context, img v1.Image,
 	}
 
 	return manifest, repositories, nil
+}
+
+// repositoriesForImageRef builds the legacy Docker save mapping for tagged
+// references. Digest references have no tag representation in this format.
+func repositoriesForImageRef(imageRef, configDigest string) map[string]map[string]string {
+	repositories := make(map[string]map[string]string)
+	ref, err := name.ParseReference(imageRef)
+	if err != nil {
+		return repositories
+	}
+	tag, ok := ref.(name.Tag)
+	if !ok {
+		return repositories
+	}
+	repoName := strings.TrimSuffix(imageRef, ":"+tag.TagStr())
+	if repoName == "" {
+		return repositories
+	}
+	repositories[repoName] = map[string]string{tag.TagStr(): configDigest}
+	return repositories
+}
+
+func repoTagsForImageRef(imageRef string) []string {
+	ref, err := name.ParseReference(imageRef)
+	if err != nil {
+		return nil
+	}
+	if _, ok := ref.(name.Tag); !ok {
+		return nil
+	}
+	return []string{imageRef}
 }
 
 func (is *ImageStreamer) streamSingleImageForBatch(ctx context.Context, tarWriter *tar.Writer, imageRef string, options *StreamOptions) (map[string]interface{}, map[string]map[string]string, error) {
@@ -1069,6 +1097,9 @@ func (is *ImageStreamer) StreamMultipleImages(ctx context.Context, imageRefs []s
 	repositoriesData, err := json.Marshal(allRepositories)
 	if err != nil {
 		return fmt.Errorf("序列化repositories失败: %w", err)
+	}
+	if len(allRepositories) == 0 {
+		return nil
 	}
 
 	repositoriesHeader := &tar.Header{

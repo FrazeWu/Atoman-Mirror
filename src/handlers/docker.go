@@ -308,11 +308,13 @@ func ProxyDockerAuthGin(c *gin.Context) {
 
 // proxyDockerAuthWithCache 带缓存的认证代理
 func proxyDockerAuthWithCache(c *gin.Context) {
-	cacheKey := utils.BuildTokenCacheKey(c.Request.URL.RawQuery)
+	cacheKey := buildDockerAuthCacheKey(c)
 
-	if cachedToken := utils.GlobalCache.GetToken(cacheKey); cachedToken != "" {
-		utils.WriteTokenResponse(c, cachedToken)
-		return
+	if cacheKey != "" {
+		if cachedToken := utils.GlobalCache.GetToken(cacheKey); cachedToken != "" {
+			utils.WriteTokenResponse(c, cachedToken)
+			return
+		}
 	}
 
 	recorder := &ResponseRecorder{
@@ -323,13 +325,27 @@ func proxyDockerAuthWithCache(c *gin.Context) {
 
 	proxyDockerAuthOriginal(c)
 
-	if recorder.statusCode == 200 && len(recorder.body) > 0 {
+	if cacheKey != "" && recorder.statusCode == 200 && len(recorder.body) > 0 {
 		ttl := utils.ExtractTTLFromResponse(recorder.body)
 		utils.GlobalCache.SetToken(cacheKey, string(recorder.body), ttl)
 	}
 
 	c.Writer = recorder.ResponseWriter
 	c.Data(recorder.statusCode, "application/json", recorder.body)
+}
+
+// buildDockerAuthCacheKey scopes public token responses to the request origin,
+// path, and canonical query. Requests carrying credentials bypass shared cache.
+func buildDockerAuthCacheKey(c *gin.Context) string {
+	if strings.TrimSpace(c.GetHeader("Authorization")) != "" || strings.TrimSpace(c.GetHeader("Proxy-Authorization")) != "" {
+		return ""
+	}
+	host := firstForwardedValue(c.GetHeader("X-Forwarded-Host"))
+	if host == "" {
+		host = c.Request.Host
+	}
+	key := strings.Join([]string{host, c.Request.Method, c.Request.URL.Path, c.Request.URL.Query().Encode()}, "\x00")
+	return utils.BuildTokenCacheKey(key)
 }
 
 // ResponseRecorder HTTP响应记录器
@@ -377,19 +393,12 @@ func proxyDockerAuthOriginal(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	proxyHost := c.Request.Host
-	if proxyHost == "" {
-		cfg := config.GetConfig()
-		proxyHost = fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-		if cfg.Server.Host == "0.0.0.0" {
-			proxyHost = fmt.Sprintf("localhost:%d", cfg.Server.Port)
-		}
-	}
+	proxyScheme, proxyHost := proxyOrigin(c)
 
 	for key, values := range resp.Header {
 		for _, value := range values {
 			if key == "Www-Authenticate" {
-				value = rewriteAuthHeader(value, proxyHost)
+				value = rewriteAuthHeaderWithScheme(value, proxyScheme, proxyHost)
 			}
 			c.Header(key, value)
 		}
@@ -399,6 +408,40 @@ func proxyDockerAuthOriginal(c *gin.Context) {
 	if _, err := io.Copy(c.Writer, resp.Body); err != nil {
 		fmt.Printf("复制认证响应失败: %v\n", err)
 	}
+}
+
+func proxyOrigin(c *gin.Context) (string, string) {
+	scheme := strings.ToLower(firstForwardedValue(c.GetHeader("X-Forwarded-Proto")))
+	if scheme != "http" && scheme != "https" {
+		if c.Request.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+
+	host := firstForwardedValue(c.GetHeader("X-Forwarded-Host"))
+	if host == "" {
+		host = strings.TrimSpace(c.Request.Host)
+	}
+	if strings.ContainsAny(host, "\r\n") {
+		host = ""
+	}
+	if host == "" {
+		cfg := config.GetConfig()
+		host = fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+		if cfg.Server.Host == "0.0.0.0" {
+			host = fmt.Sprintf("localhost:%d", cfg.Server.Port)
+		}
+	}
+	return scheme, host
+}
+
+func firstForwardedValue(value string) string {
+	if index := strings.IndexByte(value, ','); index >= 0 {
+		value = value[:index]
+	}
+	return strings.TrimSpace(value)
 }
 
 // buildDockerAuthURL 根据 token 请求的 service 参数选择上游认证地址。
@@ -437,7 +480,15 @@ func resolveAuthHost(service string) string {
 
 // rewriteAuthHeader 将上游认证 realm 统一改写到本机 /token，避免 quay 等变成 /v2/auth 误入 Registry 路由。
 func rewriteAuthHeader(authHeader, proxyHost string) string {
-	proxyToken := "http://" + proxyHost + "/token"
+	return rewriteAuthHeaderWithScheme(authHeader, "http", proxyHost)
+}
+
+func rewriteAuthHeaderWithScheme(authHeader, proxyScheme, proxyHost string) string {
+	proxyScheme = strings.ToLower(strings.TrimSpace(proxyScheme))
+	if proxyScheme != "https" {
+		proxyScheme = "http"
+	}
+	proxyToken := proxyScheme + "://" + proxyHost + "/token"
 
 	cfg := config.GetConfig()
 	for _, mapping := range cfg.Registries {
@@ -447,7 +498,7 @@ func rewriteAuthHeader(authHeader, proxyHost string) string {
 		authHeader = strings.ReplaceAll(authHeader, "https://"+mapping.AuthHost, proxyToken)
 	}
 	authHeader = strings.ReplaceAll(authHeader, "https://auth.docker.io/token", proxyToken)
-	authHeader = strings.ReplaceAll(authHeader, "https://auth.docker.io", "http://"+proxyHost)
+	authHeader = strings.ReplaceAll(authHeader, "https://auth.docker.io", proxyScheme+"://"+proxyHost)
 
 	return authHeader
 }

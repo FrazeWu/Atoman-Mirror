@@ -65,6 +65,47 @@ func TestGenerateContentFingerprintStable(t *testing.T) {
 	}
 }
 
+func TestRepositoriesForImageRefParsesTagsAndDigests(t *testing.T) {
+	const configDigest = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+	tests := []struct {
+		name      string
+		imageRef  string
+		repo      string
+		tag       string
+		wantEntry bool
+	}{
+		{name: "registry port", imageRef: "registry.example:5000/team/app:latest", repo: "registry.example:5000/team/app", tag: "latest", wantEntry: true},
+		{name: "default namespace", imageRef: "nginx:latest", repo: "nginx", tag: "latest", wantEntry: true},
+		{name: "digest has no legacy tag", imageRef: "ghcr.io/team/app@" + configDigest, wantEntry: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := repositoriesForImageRef(tt.imageRef, configDigest)
+			if !tt.wantEntry {
+				if len(got) != 0 {
+					t.Fatalf("digest produced legacy repositories metadata: %#v", got)
+				}
+				return
+			}
+			if len(got) != 1 || got[tt.repo][tt.tag] != configDigest {
+				t.Fatalf("repositories = %#v", got)
+			}
+		})
+	}
+}
+
+func TestRepoTagsForImageRefOmitsDigestReferences(t *testing.T) {
+	const digestRef = "ghcr.io/team/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if got := repoTagsForImageRef(digestRef); got != nil {
+		t.Fatalf("digest RepoTags = %#v, want nil", got)
+	}
+	if got := repoTagsForImageRef("registry.example:5000/team/app:latest"); len(got) != 1 || got[0] != "registry.example:5000/team/app:latest" {
+		t.Fatalf("tag RepoTags = %#v", got)
+	}
+}
+
 func TestResolveImageRef(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
