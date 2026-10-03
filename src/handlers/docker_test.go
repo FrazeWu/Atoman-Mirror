@@ -114,6 +114,42 @@ enabled = true
 	})
 }
 
+func TestBuildDockerAuthCacheKeyScopesPublicRequests(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	newContext := func(rawURL, host, authorization string) *gin.Context {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodGet, rawURL, nil)
+		c.Request.Host = host
+		if authorization != "" {
+			c.Request.Header.Set("Authorization", authorization)
+		}
+		return c
+	}
+
+	base := buildDockerAuthCacheKey(newContext("/token?scope=repository:library/nginx:pull&service=registry.docker.io", "mirror.example", ""))
+	canonical := buildDockerAuthCacheKey(newContext("/token?service=registry.docker.io&scope=repository:library/nginx:pull", "mirror.example", ""))
+	if base == "" || base != canonical {
+		t.Fatalf("equivalent public requests produced different keys: %q %q", base, canonical)
+	}
+	if base == buildDockerAuthCacheKey(newContext("/token?service=ghcr.io&scope=repository:library/nginx:pull", "mirror.example", "")) {
+		t.Fatal("different registry services shared a token cache key")
+	}
+	if base == buildDockerAuthCacheKey(newContext("/token/alternate?scope=repository:library/nginx:pull&service=registry.docker.io", "mirror.example", "")) {
+		t.Fatal("different auth paths shared a token cache key")
+	}
+	if base == buildDockerAuthCacheKey(newContext("/token?scope=repository:library/nginx:pull&service=registry.docker.io", "other.example", "")) {
+		t.Fatal("different hosts shared a token cache key")
+	}
+	post := newContext("/token?scope=repository:library/nginx:pull&service=registry.docker.io", "mirror.example", "")
+	post.Request.Method = http.MethodPost
+	if base == buildDockerAuthCacheKey(post) {
+		t.Fatal("different auth methods shared a token cache key")
+	}
+	if got := buildDockerAuthCacheKey(newContext("/token?scope=repository:library/nginx:pull&service=registry.docker.io", "mirror.example", "Bearer secret")); got != "" {
+		t.Fatalf("authenticated request should bypass shared cache, got key %q", got)
+	}
+}
+
 func TestRewriteAuthHeader(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
 	data := []byte(`
@@ -151,5 +187,41 @@ enabled = true
 	want = `Bearer realm="http://proxy.example.com/token",service="registry.docker.io"`
 	if got != want {
 		t.Fatalf("docker hub rewrite: got %q want %q", got, want)
+	}
+}
+
+func TestRewriteAuthHeaderPreservesForwardedHTTPS(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.toml")
+	data := []byte(`[registries."quay.io"]
+upstream = "quay.io"
+authHost = "quay.io/v2/auth"
+enabled = true
+`)
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("CONFIG_PATH", path)
+	if err := config.LoadConfig(); err != nil {
+		t.Fatal(err)
+	}
+
+	got := rewriteAuthHeaderWithScheme(`Bearer realm="https://quay.io/v2/auth",service="quay.io"`, "https", "mirror.example")
+	want := `Bearer realm="https://mirror.example/token",service="quay.io"`
+	if got != want {
+		t.Fatalf("got %q want %q", got, want)
+	}
+}
+
+func TestProxyOriginUsesForwardedHeaders(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/token", nil)
+	c.Request.Host = "127.0.0.1:50001"
+	c.Request.Header.Set("X-Forwarded-Proto", "https, http")
+	c.Request.Header.Set("X-Forwarded-Host", "mirror.example, proxy.internal")
+
+	scheme, host := proxyOrigin(c)
+	if scheme != "https" || host != "mirror.example" {
+		t.Fatalf("proxy origin = %s://%s, want https://mirror.example", scheme, host)
 	}
 }
