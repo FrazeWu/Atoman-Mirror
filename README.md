@@ -32,6 +32,12 @@
 ./scripts/build-go.sh
 ```
 
+在干净检出中验证前端产物和 Go embed 测试链路：
+
+```bash
+./scripts/check-clean-build.sh
+```
+
 启动服务：
 
 ```bash
