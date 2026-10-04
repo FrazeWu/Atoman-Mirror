@@ -43,9 +43,9 @@ CONFIG_PATH=/etc/hubproxy/config.toml ./build/hubproxy
 ```bash
 sudo install -Dm755 build/hubproxy /usr/bin/hubproxy
 sudo install -Dm644 src/config.toml /etc/hubproxy/config.toml
-sudo install -Dm644 packaging/hubproxy.service /etc/systemd/system/hubproxy.service
+sudo install -Dm644 packaging/atoman-mirror.service /etc/systemd/system/atoman-mirror.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now hubproxy
+sudo systemctl enable --now atoman-mirror
 ```
 
 验证服务：
