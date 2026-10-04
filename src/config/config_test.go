@@ -3,7 +3,9 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestLoadConfigUsesConfigPathAndEnvOverrides(t *testing.T) {
@@ -37,5 +39,34 @@ proxy = "socks5://127.0.0.1:1080"
 	}
 	if cfg.Access.Proxy != "" {
 		t.Fatalf("Access.Proxy = %q, want empty override", cfg.Access.Proxy)
+	}
+}
+
+func TestConfigConcurrentReadAndUpdateCompletes(t *testing.T) {
+	setConfig(DefaultConfig())
+
+	done := make(chan struct{})
+	var wg sync.WaitGroup
+	for worker := 0; worker < 8; worker++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for iteration := 0; iteration < 200; iteration++ {
+				setConfig(DefaultConfig())
+				if GetConfig() == nil {
+					t.Error("GetConfig returned nil")
+				}
+			}
+		}()
+	}
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("concurrent config access did not complete")
 	}
 }
