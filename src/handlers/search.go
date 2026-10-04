@@ -23,6 +23,8 @@ type SearchResult struct {
 	Results  []Repository `json:"results"`
 }
 
+const maxSearchPageSize = 100
+
 // Repository 仓库信息
 type Repository struct {
 	Name          string `json:"repo_name"`
@@ -339,11 +341,11 @@ func getRepositoryTags(ctx context.Context, namespace, name string, page, pageSi
 	if page <= 0 {
 		page = 1
 	}
-	if pageSize <= 0 || pageSize > 100 {
-		pageSize = 100
+	if pageSize <= 0 || pageSize > maxSearchPageSize {
+		pageSize = maxSearchPageSize
 	}
 
-	cacheKey := fmt.Sprintf("tags:%s:%s:page_%d", namespace, name, page)
+	cacheKey := fmt.Sprintf("tags:%s:%s:page_%d:size_%d", namespace, name, page, pageSize)
 	if cached, ok := searchCache.Get(cacheKey); ok {
 		result := cached.(TagPageResult)
 		return result.Tags, result.HasMore, nil
@@ -380,10 +382,20 @@ func fetchTagPage(ctx context.Context, url string, maxRetries int) (*struct {
 
 	for retry := 0; retry < maxRetries; retry++ {
 		if retry > 0 {
-			time.Sleep(time.Duration(retry) * 500 * time.Millisecond)
+			timer := time.NewTimer(time.Duration(retry) * 500 * time.Millisecond)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return nil, ctx.Err()
+			case <-timer.C:
+			}
 		}
 
-		resp, err := utils.GetSearchHTTPClient().Get(url)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return nil, fmt.Errorf("创建请求失败: %v", err)
+		}
+		resp, err := utils.GetSearchHTTPClient().Do(req)
 		if err != nil {
 			lastErr = err
 			if isRetryableError(err) && retry < maxRetries-1 {
@@ -445,10 +457,19 @@ func parsePaginationParams(c *gin.Context, defaultPageSize int) (page, pageSize 
 			fmt.Printf("解析page参数失败: %v\n", err)
 		}
 	}
+	if page < 1 {
+		page = 1
+	}
 	if ps := c.Query("page_size"); ps != "" {
 		if _, err := fmt.Sscanf(ps, "%d", &pageSize); err != nil {
 			fmt.Printf("解析page_size参数失败: %v\n", err)
 		}
+	}
+	if pageSize < 1 {
+		pageSize = defaultPageSize
+	}
+	if pageSize > maxSearchPageSize {
+		pageSize = maxSearchPageSize
 	}
 
 	return page, pageSize
