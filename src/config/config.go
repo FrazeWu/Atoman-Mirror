@@ -157,6 +157,11 @@ func GetConfig() *AppConfig {
 	}
 	configCacheMutex.RUnlock()
 
+	// Keep the lock order consistent with setConfig: appConfigLock before
+	// configCacheMutex. Holding the config read lock while refreshing the cache
+	// prevents a concurrent update from waiting on the locks in reverse order.
+	appConfigLock.RLock()
+	defer appConfigLock.RUnlock()
 	configCacheMutex.Lock()
 	defer configCacheMutex.Unlock()
 
@@ -164,9 +169,7 @@ func GetConfig() *AppConfig {
 		return cachedConfig
 	}
 
-	appConfigLock.RLock()
 	if appConfig == nil {
-		appConfigLock.RUnlock()
 		defaultCfg := DefaultConfig()
 		cachedConfig = defaultCfg
 		configCacheTime = time.Now()
@@ -178,7 +181,6 @@ func GetConfig() *AppConfig {
 	configCopy.Security.BlackList = append([]string(nil), appConfig.Security.BlackList...)
 	configCopy.Access.WhiteList = append([]string(nil), appConfig.Access.WhiteList...)
 	configCopy.Access.BlackList = append([]string(nil), appConfig.Access.BlackList...)
-	appConfigLock.RUnlock()
 
 	cachedConfig = &configCopy
 	configCacheTime = time.Now()
