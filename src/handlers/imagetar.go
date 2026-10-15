@@ -979,13 +979,26 @@ func handleImageInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "镜像引用格式错误: " + err.Error()})
 		return
 	}
+	if err := validateImageInfoRegistry(ref); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "镜像仓库未启用"})
+		return
+	}
 	if allowed, reason := utils.GlobalAccessController.CheckDockerAccess(imageRef); !allowed {
 		c.JSON(http.StatusForbidden, gin.H{"error": reason})
 		return
 	}
 
 	ctx := c.Request.Context()
-	contextOptions := append(globalImageStreamer.remoteOptions, remote.WithContext(ctx))
+	transport, err := imageInfoTransport()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "镜像仓库连接不可用"})
+		return
+	}
+	contextOptions := []remote.Option{
+		remote.WithAuth(authn.Anonymous),
+		remote.WithTransport(transport),
+		remote.WithContext(ctx),
+	}
 
 	desc, err := globalImageStreamer.getImageDescriptor(ref, contextOptions)
 	if err != nil {
