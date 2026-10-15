@@ -13,10 +13,11 @@ import (
 
 // RegistryMapping Registry映射配置
 type RegistryMapping struct {
-	Upstream string `toml:"upstream"`
-	AuthHost string `toml:"authHost"`
-	AuthType string `toml:"authType"`
-	Enabled  bool   `toml:"enabled"`
+	Upstream            string `toml:"upstream"`
+	AuthHost            string `toml:"authHost"`
+	AuthType            string `toml:"authType"`
+	Enabled             bool   `toml:"enabled"`
+	AllowPrivateNetwork bool   `toml:"allowPrivateNetwork"`
 }
 
 // AppConfig 应用配置结构体
