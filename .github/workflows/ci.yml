@@ -1,0 +1,39 @@
+name: Mirror CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mirror-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: src/go.mod
+          cache-dependency-path: src/go.sum
+      - run: ./scripts/check-clean-build.sh
+      - run: npm --prefix web run test:ui
+      - run: npm --prefix web audit --audit-level=moderate
+      - run: go vet ./...
+        working-directory: src
+      - run: go test -race ./config ./handlers ./utils
+        working-directory: src
+      - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+        working-directory: src

@@ -40,8 +40,14 @@ jobs:
           
       - name: 获取版本号
         id: version
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION=${{ github.event.inputs.version }}
+          if [[ ! "$RELEASE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release version" >&2
+            exit 1
+          fi
+          VERSION="$RELEASE_VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "版本号: $VERSION"
           

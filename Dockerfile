@@ -6,7 +6,7 @@ RUN npm ci
 COPY web/ .
 RUN npm run build
 
-FROM golang:1.26-alpine AS builder
+FROM golang:1.26.10-alpine AS builder
 
 ARG TARGETARCH
 ARG VERSION=dev
